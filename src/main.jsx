@@ -14,10 +14,26 @@ createRoot(document.getElementById('root')).render(
                 <Toaster
                     position="top-right"
                     toastOptions={{
+                        className: 'rounded-xl',
                         style: {
-                            background: '#0f172a',
-                            color: '#e2e8f0',
-                            border: '1px solid #334155',
+                            background: '#09090b',
+                            color: '#e4e4e7',
+                            border: '1px solid #3f3f46',
+                            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.35)',
+                        },
+                        success: {
+                            style: {
+                                background: 'rgba(16, 185, 129, 0.14)',
+                                color: '#d1fae5',
+                                border: '1px solid rgba(16, 185, 129, 0.35)',
+                            },
+                        },
+                        error: {
+                            style: {
+                                background: 'rgba(239, 68, 68, 0.14)',
+                                color: '#fee2e2',
+                                border: '1px solid rgba(239, 68, 68, 0.35)',
+                            },
                         },
                     }}
                 />

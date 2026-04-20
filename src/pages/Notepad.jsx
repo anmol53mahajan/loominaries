@@ -102,24 +102,25 @@ export default function Notepad() {
     : 'Auto-saving enabled'
 
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-0 shadow-sm">
-      <div className="border-b border-slate-200 px-5 py-4">
+    <section className="saas-card overflow-hidden p-0 text-white">
+      <div className="border-b border-zinc-800 px-5 py-4">
         <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-slate-900">Strategy Notepad</h2>
-            <p className="mt-1 text-sm text-slate-600">
+            <p className="text-xs uppercase tracking-[0.25em] text-indigo-400">Workspace</p>
+            <h2 className="mt-2 text-3xl font-semibold text-white">Strategy Notepad</h2>
+            <p className="mt-1 text-sm text-zinc-400">
               Distraction-free workspace for strategy notes, speech drafts, and quick ideas.
             </p>
           </div>
 
-          <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-600">
+          <div className="inline-flex items-center gap-2 rounded-full border border-zinc-700 bg-zinc-900 px-3 py-2 text-xs font-semibold text-zinc-300">
             <Save className="h-4 w-4" />
             {saving ? 'Saving...' : saveMeta}
           </div>
         </div>
 
         {error && (
-          <div className="mt-4 rounded-xl border border-rose-500/20 bg-rose-50 px-3 py-2 text-sm text-rose-700">
+          <div className="mt-4 rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-300">
             {error}
           </div>
         )}
@@ -129,8 +130,8 @@ export default function Notepad() {
         <div className="p-5 md:p-6">
           {loading ? (
             <div className="space-y-3">
-              <div className="h-4 w-1/3 animate-pulse rounded bg-slate-200" />
-              <div className="h-[430px] animate-pulse rounded-2xl bg-slate-100" />
+              <div className="h-4 w-1/3 animate-pulse rounded bg-zinc-900" />
+              <div className="h-[430px] animate-pulse rounded-2xl bg-zinc-900" />
             </div>
           ) : (
             <textarea
@@ -138,25 +139,25 @@ export default function Notepad() {
               value={content}
               onChange={handleChange}
               placeholder="Write your strategy notes, speech drafts, negotiation cues, or quick ideas here..."
-              className="min-h-[520px] w-full resize-none rounded-2xl border border-slate-200 bg-slate-50 p-5 text-base leading-7 text-slate-900 outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100"
+              className="min-h-[560px] w-full resize-none rounded-2xl border border-zinc-700 bg-zinc-900 p-6 text-[17px] leading-8 text-zinc-100 outline-none transition-all duration-200 placeholder:text-zinc-500 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/30"
               style={{ fontFamily: 'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif' }}
             />
           )}
         </div>
 
-        <aside className="border-t border-slate-200 bg-slate-50 p-5 lg:border-l lg:border-t-0">
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-            <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">Workspace Tips</h3>
-            <ul className="mt-3 space-y-3 text-sm leading-6 text-slate-600">
+        <aside className="border-t border-zinc-800 bg-zinc-950/80 p-5 lg:border-l lg:border-t-0">
+          <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-4 shadow-lg shadow-black/20">
+            <h3 className="text-sm font-semibold uppercase tracking-wide text-zinc-500">Workspace Tips</h3>
+            <ul className="mt-3 space-y-3 text-sm leading-6 text-zinc-300">
               <li>• Type freely. Notes save automatically after a short pause.</li>
               <li>• Use this for speeches, clauses, rebuttals, and prep ideas.</li>
               <li>• Keep it open during debate for fast thinking.</li>
             </ul>
           </div>
 
-          <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-            <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">Status</h3>
-            <div className="mt-3 space-y-2 text-sm text-slate-600">
+          <div className="mt-4 rounded-2xl border border-zinc-800 bg-zinc-950 p-4 shadow-lg shadow-black/20">
+            <h3 className="text-sm font-semibold uppercase tracking-wide text-zinc-500">Status</h3>
+            <div className="mt-3 space-y-2 text-sm text-zinc-300">
               <p>Autosave: Enabled</p>
               <p>Last saved: {savedAt ? (savedAt instanceof Date ? savedAt.toLocaleTimeString() : 'recently') : 'Waiting for first save'}</p>
             </div>
@@ -170,7 +171,7 @@ export default function Notepad() {
               }
               toast.success('Ready to write')
             }}
-            className="mt-4 w-full rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 active:scale-[0.99]"
+            className="saas-btn-primary mt-4 w-full"
           >
             Focus Editor
           </button>

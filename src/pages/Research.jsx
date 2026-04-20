@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import toast from 'react-hot-toast'
 import { addDoc, collection, deleteDoc, doc, onSnapshot, query, serverTimestamp, where } from 'firebase/firestore'
+import { BookOpenText, MessageSquareDashed } from 'lucide-react'
 import ResourceCard from '../components/ui/ResourceCard'
 import SkeletonLoader from '../components/ui/SkeletonLoader'
 import { useAuth } from '../hooks/useAuth'
@@ -323,9 +324,10 @@ export default function Research() {
 
   return (
     <section className="space-y-4 text-white">
-      <header className="rounded-2xl border border-slate-700 bg-slate-900 p-5 shadow-lg">
+      <header className="saas-card">
+        <p className="text-xs uppercase tracking-[0.26em] text-indigo-400">AI Intelligence Hub</p>
         <h2 className="text-2xl font-bold">Research &amp; AI Intelligence Hub</h2>
-        <p className="mt-1 text-sm text-slate-300">
+        <p className="mt-1 text-sm text-zinc-400">
           Ask strategic questions, generate tactical content, and maintain a personal resource library.
         </p>
       </header>
@@ -344,20 +346,23 @@ export default function Research() {
 
       <div className="grid gap-4 lg:grid-cols-[7fr_3fr]">
         <div className="space-y-4">
-          <article className="rounded-2xl border border-slate-700 bg-slate-800 p-4 shadow-sm md:p-5">
+          <article className="saas-card md:p-5">
             <div className="mb-3 flex items-center justify-between">
               <h3 className="text-lg font-semibold">Strategist Chat</h3>
-              <span className="text-xs text-slate-400">Contextual to your portfolio</span>
+              <span className="text-xs text-zinc-400">Contextual to your portfolio</span>
             </div>
 
             <div
               ref={chatScrollRef}
-              className="mb-4 h-[320px] space-y-3 overflow-y-auto rounded-xl border border-slate-700 bg-slate-900/60 p-3"
+              className="mb-4 h-[320px] space-y-3 overflow-y-auto rounded-xl border border-zinc-700 bg-zinc-950/70 p-3"
             >
               {chatMessages.length === 0 && !loading && (
-                <p className="text-sm text-slate-400">
-                  Start by asking for negotiation strategy, rebuttals, or bloc-building advice.
-                </p>
+                <div className="rounded-xl border border-zinc-800 bg-zinc-950 p-4 text-sm text-zinc-400">
+                  <div className="mb-2 inline-flex rounded-full border border-zinc-700 bg-zinc-900 p-2 text-indigo-300">
+                    <MessageSquareDashed className="h-4 w-4" />
+                  </div>
+                  <p>Start by asking for negotiation strategy, rebuttals, or bloc-building advice.</p>
+                </div>
               )}
 
               {chatMessages.map((message) => (
@@ -369,8 +374,8 @@ export default function Research() {
                   className={[
                     'rounded-xl p-3 text-sm',
                     message.role === 'user'
-                      ? 'ml-auto max-w-[85%] bg-blue-600 text-white'
-                      : 'max-w-[90%] border border-slate-700 bg-slate-800 text-slate-100',
+                      ? 'ml-auto max-w-[85%] bg-indigo-500 text-white'
+                      : 'max-w-[90%] border border-zinc-700 bg-zinc-900 text-zinc-100',
                   ].join(' ')}
                 >
                   <p className="whitespace-pre-wrap">{message.content}</p>
@@ -378,7 +383,7 @@ export default function Research() {
                     <button
                       type="button"
                       onClick={() => handleCopy(message.content)}
-                      className="mt-2 rounded-md border border-slate-600 px-2 py-1 text-xs text-slate-300 transition hover:border-slate-500 hover:text-white"
+                      className="mt-2 rounded-md border border-zinc-600 px-2 py-1 text-xs text-zinc-300 transition hover:border-zinc-500 hover:text-white"
                     >
                       Copy
                     </button>
@@ -387,8 +392,8 @@ export default function Research() {
               ))}
 
               {loading && (
-                <div className="max-w-[90%] rounded-xl border border-slate-700 bg-slate-800 p-3">
-                  <p className="mb-2 text-xs text-slate-400">Thinking...</p>
+                <div className="max-w-[90%] rounded-xl border border-zinc-700 bg-zinc-900 p-3">
+                  <p className="mb-2 text-xs text-zinc-400">Thinking...</p>
                   <SkeletonLoader lines={4} />
                 </div>
               )}
@@ -399,21 +404,21 @@ export default function Research() {
                 value={inputText}
                 onChange={(event) => setInputText(event.target.value)}
                 placeholder="Ask for strategy, rebuttals, or speech support..."
-                className="min-h-11 flex-1 rounded-xl border border-slate-600 bg-slate-900 px-3 text-sm text-white outline-none transition focus:border-blue-400"
+                className="saas-input min-h-11 flex-1"
               />
               <button
                 type="submit"
                 disabled={loading}
-                className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-blue-800"
+                className="saas-btn-primary"
               >
                 Send
               </button>
             </form>
           </article>
 
-          <article className="rounded-2xl border border-slate-700 bg-slate-800 p-4 shadow-sm md:p-5">
+          <article className="saas-card md:p-5">
             <h3 className="text-lg font-semibold">AI Generator Suite</h3>
-            <p className="mt-1 text-sm text-slate-300">
+            <p className="mt-1 text-sm text-zinc-400">
               Generate ready-to-use outputs for speeches, POIs, and strategic positioning.
             </p>
 
@@ -422,7 +427,7 @@ export default function Research() {
                 type="button"
                 onClick={() => handleGeneratorClick('openingSpeech')}
                 disabled={loading}
-                className="rounded-xl border border-slate-600 bg-slate-900 px-3 py-2 text-sm font-medium transition hover:border-blue-400 hover:text-blue-200 disabled:cursor-not-allowed disabled:opacity-60"
+                className="saas-btn-secondary"
               >
                 Generate Opening Speech
               </button>
@@ -431,7 +436,7 @@ export default function Research() {
                 type="button"
                 onClick={() => handleGeneratorClick('pois')}
                 disabled={loading}
-                className="rounded-xl border border-slate-600 bg-slate-900 px-3 py-2 text-sm font-medium transition hover:border-blue-400 hover:text-blue-200 disabled:cursor-not-allowed disabled:opacity-60"
+                className="saas-btn-secondary"
               >
                 Generate POIs
               </button>
@@ -440,14 +445,14 @@ export default function Research() {
                 type="button"
                 onClick={() => handleGeneratorClick('positionIdeas')}
                 disabled={loading}
-                className="rounded-xl border border-slate-600 bg-slate-900 px-3 py-2 text-sm font-medium transition hover:border-blue-400 hover:text-blue-200 disabled:cursor-not-allowed disabled:opacity-60"
+                className="saas-btn-secondary"
               >
                 Generate Position Ideas
               </button>
             </div>
 
             {loading && (
-              <div className="mt-4 rounded-xl border border-slate-700 bg-slate-900/60 p-4">
+              <div className="mt-4 rounded-xl border border-zinc-700 bg-zinc-950/70 p-4">
                 <SkeletonLoader lines={5} />
               </div>
             )}
@@ -460,30 +465,30 @@ export default function Research() {
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.25 }}
-                    className="rounded-xl border border-slate-700 bg-slate-900/60 p-4"
+                    className="rounded-xl border border-zinc-700 bg-zinc-950/70 p-4"
                   >
                     <div className="mb-2 flex items-center justify-between gap-3">
-                      <h4 className="text-sm font-semibold text-slate-200">
+                      <h4 className="text-sm font-semibold text-zinc-200">
                         {GENERATOR_LABELS[generatorKey] || 'Generated Output'}
                       </h4>
                       <div className="flex items-center gap-2">
                         <button
                           type="button"
                           onClick={() => handleSaveGeneratedOutput(generatorKey)}
-                          className="rounded-md border border-emerald-500/50 bg-emerald-500/10 px-2 py-1 text-xs text-emerald-200 transition hover:border-emerald-400 hover:text-emerald-100"
+                          className="rounded-md border border-emerald-500/50 bg-emerald-500/10 px-2 py-1 text-xs text-emerald-200 transition hover:scale-[1.02] hover:border-emerald-400 hover:text-emerald-100"
                         >
                           Save To Library
                         </button>
                         <button
                           type="button"
                           onClick={() => handleCopy(generatedOutput)}
-                          className="rounded-md border border-slate-600 px-2 py-1 text-xs text-slate-300 transition hover:border-slate-500 hover:text-white"
+                          className="rounded-md border border-zinc-600 px-2 py-1 text-xs text-zinc-300 transition hover:scale-[1.02] hover:border-zinc-500 hover:text-white"
                         >
                           Copy
                         </button>
                       </div>
                     </div>
-                    <p className="whitespace-pre-wrap text-sm text-slate-100">{generatedOutput}</p>
+                    <p className="whitespace-pre-wrap text-sm text-zinc-100">{generatedOutput}</p>
                   </motion.article>
                 ))}
               </div>
@@ -491,28 +496,28 @@ export default function Research() {
           </article>
         </div>
 
-        <aside className="rounded-2xl border border-slate-700 bg-slate-800 p-4 shadow-sm md:p-5">
+        <aside className="saas-card md:p-5">
           <h3 className="text-lg font-semibold">Resource Library</h3>
-          <p className="mt-1 text-sm text-slate-300">Save trusted references for quick access during debate prep.</p>
+          <p className="mt-1 text-sm text-zinc-400">Save trusted references for quick access during debate prep.</p>
 
           <form onSubmit={handleAddResource} className="mt-4 space-y-3">
             <input
               value={resourceTitle}
               onChange={(event) => setResourceTitle(event.target.value)}
               placeholder="Resource title"
-              className="w-full rounded-xl border border-slate-600 bg-slate-900 px-3 py-2 text-sm text-white outline-none transition focus:border-blue-400"
+              className="saas-input"
             />
 
             <input
               value={resourceLink}
               onChange={(event) => setResourceLink(event.target.value)}
               placeholder="https://example.org"
-              className="w-full rounded-xl border border-slate-600 bg-slate-900 px-3 py-2 text-sm text-white outline-none transition focus:border-blue-400"
+              className="saas-input"
             />
 
             <button
               type="submit"
-              className="w-full rounded-xl bg-blue-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-blue-500"
+              className="saas-btn-primary w-full"
             >
               Add Resource
             </button>
@@ -522,9 +527,13 @@ export default function Research() {
             {resourceLoading && <SkeletonLoader lines={4} />}
 
             {!resourceLoading && resources.length === 0 && (
-              <p className="rounded-xl border border-slate-700 bg-slate-900/60 p-3 text-sm text-slate-400">
-                No resources saved yet.
-              </p>
+              <div className="rounded-xl border border-zinc-800 bg-zinc-950 p-4 text-sm text-zinc-400">
+                <div className="mb-2 inline-flex rounded-full border border-zinc-700 bg-zinc-900 p-2 text-indigo-300">
+                  <BookOpenText className="h-4 w-4" />
+                </div>
+                <p>No resources saved yet.</p>
+                <p className="mt-1 text-xs text-zinc-500">Add your first source to build a private research stack.</p>
+              </div>
             )}
 
             {resources.map((resource) => (

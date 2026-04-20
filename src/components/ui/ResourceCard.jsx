@@ -23,16 +23,16 @@ export default function ResourceCard({ title, link, content, kind, onCopy, onDel
   const badgeLabel = KIND_LABELS[kind]
 
   return (
-    <article className="rounded-xl border border-slate-700 bg-slate-800/80 p-3 shadow-sm">
+    <article className="rounded-2xl border border-zinc-800 bg-zinc-950 p-4 shadow-lg shadow-black/20 transition-all duration-200 hover:border-zinc-700">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <div className="mb-2 flex items-center gap-2">
             {faviconUrl ? (
               <img src={faviconUrl} alt="Site icon" className="h-4 w-4 rounded-sm" />
             ) : (
-              <div className="h-4 w-4 rounded-sm bg-slate-600" aria-hidden="true" />
+              <div className="h-4 w-4 rounded-sm bg-zinc-600" aria-hidden="true" />
             )}
-            <h4 className="truncate text-sm font-semibold text-white">{title}</h4>
+            <h4 className="truncate text-sm font-semibold text-zinc-100">{title}</h4>
           </div>
 
           {badgeLabel && (
@@ -46,19 +46,19 @@ export default function ResourceCard({ title, link, content, kind, onCopy, onDel
               href={link}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-1 break-all text-xs text-blue-300 hover:text-blue-200"
+              className="inline-flex items-center gap-1 break-all text-xs text-indigo-300 hover:text-indigo-200"
             >
               Open link
               <ExternalLink className="h-3.5 w-3.5" />
             </a>
           ) : (
             <div className="space-y-2">
-              <p className="line-clamp-3 whitespace-pre-wrap text-xs text-slate-300">{content}</p>
+              <p className="line-clamp-3 whitespace-pre-wrap text-xs text-zinc-300">{content}</p>
               {onCopy && (
                 <button
                   type="button"
                   onClick={onCopy}
-                  className="rounded-md border border-slate-600 px-2 py-1 text-xs text-slate-300 transition hover:border-slate-500 hover:text-white"
+                  className="saas-btn-ghost border border-zinc-700 px-2 py-1 text-xs"
                 >
                   Copy Output
                 </button>
@@ -70,7 +70,7 @@ export default function ResourceCard({ title, link, content, kind, onCopy, onDel
         <button
           type="button"
           onClick={onDelete}
-          className="rounded-lg border border-slate-600 p-2 text-slate-300 transition hover:border-rose-400 hover:text-rose-300"
+          className="rounded-lg border border-zinc-700 p-2 text-zinc-300 transition-all duration-200 hover:border-red-400 hover:bg-red-500/10 hover:text-red-300"
           aria-label={`Delete resource ${title}`}
         >
           <Trash2 className="h-4 w-4" />

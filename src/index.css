@@ -1,1 +1,136 @@
 @import "tailwindcss";
+
+:root {
+	color-scheme: dark;
+}
+
+html {
+	scroll-behavior: smooth;
+}
+
+body {
+	background: rgb(3 3 3);
+	color: rgb(255 255 255);
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+* {
+	scrollbar-width: thin;
+	scrollbar-color: rgb(63 63 70) rgb(10 10 10);
+}
+
+::-webkit-scrollbar {
+	width: 6px;
+	height: 6px;
+}
+
+::-webkit-scrollbar-track {
+	background: rgb(10 10 10);
+}
+
+::-webkit-scrollbar-thumb {
+	background: rgb(63 63 70);
+	border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: rgb(82 82 91);
+}
+
+.saas-card {
+	border: 1px solid rgb(39 39 42);
+	background: rgb(9 9 11);
+	border-radius: 1rem;
+	padding: 1.25rem;
+	box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
+	transition: all 0.2s ease;
+}
+
+.saas-card:hover {
+	border-color: rgb(63 63 70);
+}
+
+.saas-card-glow:hover {
+	box-shadow: 0 0 20px rgba(99, 102, 241, 0.15);
+}
+
+.saas-input {
+	width: 100%;
+	border-radius: 0.75rem;
+	border: 1px solid rgb(63 63 70);
+	background: rgb(24 24 27);
+	padding: 0.625rem 0.75rem;
+	font-size: 0.875rem;
+	color: rgb(255 255 255);
+	outline: none;
+	transition: all 0.2s ease;
+}
+
+.saas-input::placeholder {
+	color: rgb(113 113 122);
+}
+
+.saas-input:focus {
+	border-color: rgb(99 102 241);
+	box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.4);
+}
+
+.saas-btn-primary,
+.saas-btn-secondary,
+.saas-btn-ghost {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	transition: all 0.2s ease;
+}
+
+.saas-btn-primary {
+	border-radius: 0.75rem;
+	background: rgb(99 102 241);
+	color: rgb(255 255 255);
+	padding: 0.625rem 1rem;
+	font-size: 0.875rem;
+	font-weight: 600;
+}
+
+.saas-btn-primary:hover {
+	background: rgb(129 140 248);
+	transform: scale(1.02);
+}
+
+.saas-btn-secondary {
+	border-radius: 0.75rem;
+	background: rgb(24 24 27);
+	color: rgb(241 245 249);
+	padding: 0.625rem 1rem;
+	font-size: 0.875rem;
+	font-weight: 600;
+}
+
+.saas-btn-secondary:hover {
+	background: rgb(39 39 42);
+	transform: scale(1.02);
+}
+
+.saas-btn-ghost {
+	border-radius: 0.75rem;
+	color: rgb(203 213 225);
+	padding: 0.5rem 0.75rem;
+	font-size: 0.875rem;
+	font-weight: 500;
+}
+
+.saas-btn-ghost:hover {
+	background: rgb(24 24 27);
+	color: rgb(255 255 255);
+}
+
+.saas-btn-primary:disabled,
+.saas-btn-secondary:disabled,
+.saas-btn-ghost:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+	transform: none;
+}

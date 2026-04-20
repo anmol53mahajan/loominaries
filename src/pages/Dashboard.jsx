@@ -72,18 +72,24 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="flex min-h-[300px] items-center justify-center rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-        <div className="h-10 w-10 animate-spin rounded-full border-4 border-slate-300 border-t-slate-800" />
+      <div className="saas-card min-h-[300px]">
+        <div className="space-y-3">
+          <div className="h-4 w-44 animate-pulse rounded bg-zinc-900" />
+          <div className="h-10 w-full animate-pulse rounded-xl bg-zinc-900" />
+          <div className="h-10 w-full animate-pulse rounded-xl bg-zinc-900" />
+          <div className="h-24 w-full animate-pulse rounded-xl bg-zinc-900" />
+        </div>
       </div>
     )
   }
 
   if (hasCommitteeData) {
     return (
-      <section className="space-y-4">
-        <header>
-          <h2 className="text-2xl font-bold text-slate-900">Dashboard</h2>
-          <p className="mt-1 text-slate-600">Your committee configuration is ready to use across Loominaries.</p>
+      <section className="space-y-5 text-white">
+        <header className="saas-card">
+          <p className="text-xs uppercase tracking-[0.26em] text-indigo-400">Overview</p>
+          <h2 className="mt-2 text-3xl font-semibold">Mission Dashboard</h2>
+          <p className="mt-2 text-sm text-zinc-400">Your committee configuration is active across Research, Live, Alliance, and Notepad.</p>
         </header>
 
         <MissionBrief committeeName={committeeName} portfolio={portfolio} agenda={agenda} />
@@ -92,17 +98,18 @@ export default function Dashboard() {
   }
 
   return (
-    <section className="mx-auto w-full max-w-3xl rounded-2xl border border-slate-200 bg-white p-6 shadow-sm md:p-8">
-      <header className="mb-6">
-        <h2 className="text-2xl font-bold text-slate-900">Set Up Your Mission</h2>
-        <p className="mt-1 text-slate-600">
+    <section className="mx-auto w-full max-w-4xl saas-card text-white md:p-8">
+      <header className="mb-7">
+        <p className="text-xs uppercase tracking-[0.26em] text-indigo-400">Setup</p>
+        <h2 className="mt-2 text-3xl font-semibold">Set Up Your Mission</h2>
+        <p className="mt-2 text-sm text-zinc-400">
           Add your committee details once. Loominaries will use this context for better AI assistance.
         </p>
       </header>
 
       <form onSubmit={handleSubmit} className="space-y-5">
         <div>
-          <label htmlFor="committeeName" className="mb-1 block text-sm font-medium text-slate-700">
+          <label htmlFor="committeeName" className="mb-2 block text-sm font-medium text-zinc-300">
             Committee Name
           </label>
           <input
@@ -111,12 +118,12 @@ export default function Dashboard() {
             value={formValues.committeeName}
             onChange={handleChange}
             placeholder="e.g. United Nations Security Council"
-            className="w-full rounded-lg border border-slate-300 px-3 py-2.5 outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+            className="saas-input"
           />
         </div>
 
         <div>
-          <label htmlFor="portfolio" className="mb-1 block text-sm font-medium text-slate-700">
+          <label htmlFor="portfolio" className="mb-2 block text-sm font-medium text-zinc-300">
             Portfolio (Country)
           </label>
           <input
@@ -125,12 +132,12 @@ export default function Dashboard() {
             value={formValues.portfolio}
             onChange={handleChange}
             placeholder="e.g. Japan"
-            className="w-full rounded-lg border border-slate-300 px-3 py-2.5 outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+            className="saas-input"
           />
         </div>
 
         <div>
-          <label htmlFor="agenda" className="mb-1 block text-sm font-medium text-slate-700">
+          <label htmlFor="agenda" className="mb-2 block text-sm font-medium text-zinc-300">
             Agenda
           </label>
           <textarea
@@ -140,16 +147,16 @@ export default function Dashboard() {
             value={formValues.agenda}
             onChange={handleChange}
             placeholder="e.g. Addressing emerging cybersecurity threats to international peace"
-            className="w-full rounded-lg border border-slate-300 px-3 py-2.5 outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+            className="saas-input"
           />
         </div>
 
-        {error && <p className="rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-700">{error}</p>}
+        {error && <p className="rounded-xl border border-red-500/40 bg-red-500/10 px-3 py-2 text-sm text-red-300">{error}</p>}
 
         <button
           type="submit"
           disabled={isSaving}
-          className="w-full rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-500 sm:w-auto"
+          className="saas-btn-primary w-full sm:w-auto"
         >
           {isSaving ? 'Saving mission brief...' : 'Save mission brief'}
         </button>

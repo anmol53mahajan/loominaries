@@ -75,14 +75,15 @@ export default function Signup() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-cyan-50 via-white to-amber-50 px-4">
-      <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-xl">
-        <h1 className="text-2xl font-bold text-slate-900">Create account</h1>
-        <p className="mt-1 text-sm text-slate-600">Join Loominaries to unlock your AI committee assistant.</p>
+    <div className="flex min-h-screen items-center justify-center bg-black px-4">
+      <div className="w-full max-w-md rounded-2xl border border-zinc-800 bg-zinc-950 p-6 shadow-2xl shadow-black/30">
+        <p className="text-xs uppercase tracking-[0.24em] text-indigo-400">Loominaries</p>
+        <h1 className="mt-2 text-2xl font-semibold text-white">Create account</h1>
+        <p className="mt-1 text-sm text-zinc-400">Join Loominaries to unlock your AI committee assistant.</p>
 
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
           <div>
-            <label htmlFor="email" className="mb-1 block text-sm font-medium text-slate-700">
+            <label htmlFor="email" className="mb-1 block text-sm font-medium text-zinc-300">
               Email
             </label>
             <input
@@ -90,14 +91,14 @@ export default function Signup() {
               type="email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+              className="saas-input"
               placeholder="delegate@loominaries.ai"
               autoComplete="email"
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="mb-1 block text-sm font-medium text-slate-700">
+            <label htmlFor="password" className="mb-1 block text-sm font-medium text-zinc-300">
               Password
             </label>
             <input
@@ -105,18 +106,18 @@ export default function Signup() {
               type="password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+              className="saas-input"
               placeholder="At least 6 characters"
               autoComplete="new-password"
             />
           </div>
 
-          {error && <p className="rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-700">{error}</p>}
+          {error && <p className="rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-300">{error}</p>}
 
           <button
             type="submit"
             disabled={isSubmitting || isGoogleLoading}
-            className="w-full rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-500"
+            className="saas-btn-primary w-full"
           >
             {isSubmitting ? 'Creating account...' : 'Create account'}
           </button>
@@ -128,9 +129,9 @@ export default function Signup() {
           />
         </form>
 
-        <p className="mt-4 text-sm text-slate-600">
+        <p className="mt-4 text-sm text-zinc-400">
           Already have an account?{' '}
-          <Link to="/login" className="font-semibold text-slate-900 underline-offset-2 hover:underline">
+          <Link to="/login" className="font-semibold text-white underline-offset-2 hover:text-indigo-300 hover:underline">
             Sign in
           </Link>
         </p>
