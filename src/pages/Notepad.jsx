@@ -1,10 +1,173 @@
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { doc, onSnapshot, setDoc, serverTimestamp } from 'firebase/firestore'
+import { useAuth } from '../hooks/useAuth'
+import { useDebounce } from '../hooks/useDebounce'
+import { db } from '../services/firebase'
+import { Save } from 'lucide-react'
+import toast from 'react-hot-toast'
+
 export default function Notepad() {
+  const { user } = useAuth()
+  const textareaRef = useRef(null)
+  const [content, setContent] = useState('')
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [savedAt, setSavedAt] = useState(null)
+  const [hasLoaded, setHasLoaded] = useState(false)
+  const [error, setError] = useState('')
+
+  const debouncedContent = useDebounce(content, 800)
+
+  useEffect(() => {
+    if (!user) {
+      setContent('')
+      setLoading(false)
+      return () => {}
+    }
+
+    setLoading(true)
+    const noteRef = doc(db, 'notes', user.uid)
+
+    const unsubscribe = onSnapshot(
+      noteRef,
+      (snapshot) => {
+        const data = snapshot.data()
+        const nextContent = String(data?.content || '')
+
+        setContent(nextContent)
+        setSavedAt(data?.updatedAt?.toDate ? data.updatedAt.toDate() : data?.updatedAt || null)
+        setHasLoaded(true)
+        setLoading(false)
+      },
+      (snapshotError) => {
+        console.error('Failed to load note:', snapshotError)
+        setError('Unable to load your note right now.')
+        setLoading(false)
+        setHasLoaded(true)
+      },
+    )
+
+    return unsubscribe
+  }, [user])
+
+  useEffect(() => {
+    if (!hasLoaded || !user) {
+      return
+    }
+
+    const noteRef = doc(db, 'notes', user.uid)
+
+    const saveNote = async () => {
+      setSaving(true)
+      try {
+        await setDoc(
+          noteRef,
+          {
+            userId: user.uid,
+            content: debouncedContent,
+            updatedAt: serverTimestamp(),
+          },
+          { merge: true },
+        )
+
+        setError('')
+        setSavedAt(new Date())
+      } catch (saveError) {
+        console.error('Auto-save failed:', saveError)
+        setError('Auto-save failed. Retrying is recommended.')
+      } finally {
+        setSaving(false)
+      }
+    }
+
+    if (debouncedContent.trim() || debouncedContent === '') {
+      saveNote()
+    }
+  }, [debouncedContent, hasLoaded, user])
+
+  const handleChange = useCallback((event) => {
+    setContent(event.target.value)
+  }, [])
+
+  const saveMeta = savedAt
+    ? `Saved ${savedAt instanceof Date ? savedAt.toLocaleString() : 'recently'}`
+    : 'Auto-saving enabled'
+
   return (
-    <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-      <h2 className="text-2xl font-bold text-slate-900">Notepad</h2>
-      <p className="mt-2 text-slate-600">
-        Save personal talking points, clauses, and negotiation notes.
-      </p>
+    <section className="rounded-2xl border border-slate-200 bg-white p-0 shadow-sm">
+      <div className="border-b border-slate-200 px-5 py-4">
+        <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+          <div>
+            <h2 className="text-2xl font-bold text-slate-900">Strategy Notepad</h2>
+            <p className="mt-1 text-sm text-slate-600">
+              Distraction-free workspace for strategy notes, speech drafts, and quick ideas.
+            </p>
+          </div>
+
+          <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-600">
+            <Save className="h-4 w-4" />
+            {saving ? 'Saving...' : saveMeta}
+          </div>
+        </div>
+
+        {error && (
+          <div className="mt-4 rounded-xl border border-rose-500/20 bg-rose-50 px-3 py-2 text-sm text-rose-700">
+            {error}
+          </div>
+        )}
+      </div>
+
+      <div className="grid gap-0 lg:grid-cols-[1fr_260px]">
+        <div className="p-5 md:p-6">
+          {loading ? (
+            <div className="space-y-3">
+              <div className="h-4 w-1/3 animate-pulse rounded bg-slate-200" />
+              <div className="h-[430px] animate-pulse rounded-2xl bg-slate-100" />
+            </div>
+          ) : (
+            <textarea
+              ref={textareaRef}
+              value={content}
+              onChange={handleChange}
+              placeholder="Write your strategy notes, speech drafts, negotiation cues, or quick ideas here..."
+              className="min-h-[520px] w-full resize-none rounded-2xl border border-slate-200 bg-slate-50 p-5 text-base leading-7 text-slate-900 outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-100"
+              style={{ fontFamily: 'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif' }}
+            />
+          )}
+        </div>
+
+        <aside className="border-t border-slate-200 bg-slate-50 p-5 lg:border-l lg:border-t-0">
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">Workspace Tips</h3>
+            <ul className="mt-3 space-y-3 text-sm leading-6 text-slate-600">
+              <li>• Type freely. Notes save automatically after a short pause.</li>
+              <li>• Use this for speeches, clauses, rebuttals, and prep ideas.</li>
+              <li>• Keep it open during debate for fast thinking.</li>
+            </ul>
+          </div>
+
+          <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">Status</h3>
+            <div className="mt-3 space-y-2 text-sm text-slate-600">
+              <p>Autosave: Enabled</p>
+              <p>Last saved: {savedAt ? (savedAt instanceof Date ? savedAt.toLocaleTimeString() : 'recently') : 'Waiting for first save'}</p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => {
+              if (textareaRef.current) {
+                textareaRef.current.focus()
+              }
+              toast.success('Ready to write')
+            }}
+            className="mt-4 w-full rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 active:scale-[0.99]"
+          >
+            Focus Editor
+          </button>
+        </aside>
+      </div>
     </section>
   )
 }
