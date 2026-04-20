@@ -47,14 +47,11 @@ The app supports the full flow of a serious MUN participant:
 
 ## Problem Statement
 
-MUN delegates usually work with scattered tools:
+Model United Nations, or MUN, is a simulation of the United Nations where students represent countries, debate global issues, negotiate with other delegates, and write solutions through speeches, caucuses, and resolutions. In a real MUN session, a delegate has to research the agenda, understand their country's stance, listen carefully to every speech, identify useful points or weak arguments, track allies and opponents, and keep notes ready for the next move.
 
-- one app for notes,
-- another for research,
-- a spreadsheet for alliances,
-- and manual listening during live debate.
+The problem is that this entire workflow is usually split across too many tools. One app is used for notes, another for research, a spreadsheet is used for alliances, and live debate is still handled manually. That fragmentation slows down preparation, makes live analysis harder, and forces delegates to switch between unrelated tools at the exact moment they need speed, clarity, and confidence.
 
-That fragmentation creates a real workflow problem. It slows down preparation, makes live debate harder to manage, and forces delegates to switch between unrelated tools at the exact moment they need speed and clarity.
+I have been doing MUNs for the last 5 years and I have done around 20 of them, so I have personally felt this problem for a long time. That experience is what pushed me to build Loominaries. I wanted to create a single workspace that helps delegates stay organized, respond faster, and ultimately perform better in committee. This website is meant to solve a real pain point and help delegates win more through better preparation and smarter live decision-making.
 
 Loominaries solves that by turning the MUN workflow into one coordinated system.
 
