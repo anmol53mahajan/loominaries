@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import { doc, getDoc, setDoc } from 'firebase/firestore'
+import { doc, getDoc, setDoc, deleteDoc } from 'firebase/firestore'
 import { useAuth } from '../hooks/useAuth'
 import { db } from '../services/firebase'
 
@@ -73,6 +73,16 @@ export function CommitteeProvider({ children }) {
     [user, setCommitteeData],
   )
 
+  const deleteCommitteeData = useCallback(async () => {
+    if (!user) {
+      throw new Error('User must be logged in to delete committee data.')
+    }
+
+    await deleteDoc(doc(db, 'committees', user.uid))
+    setCommitteeData(initialCommitteeState)
+    return null
+  }, [user, setCommitteeData])
+
   useEffect(() => {
     let isMounted = true
 
@@ -127,6 +137,7 @@ export function CommitteeProvider({ children }) {
       setCommitteeData,
       loadCommitteeData,
       saveCommitteeData,
+      deleteCommitteeData,
     }),
     [
       committeeName,
@@ -137,6 +148,7 @@ export function CommitteeProvider({ children }) {
       setCommitteeData,
       loadCommitteeData,
       saveCommitteeData,
+      deleteCommitteeData,
     ],
   )
 
