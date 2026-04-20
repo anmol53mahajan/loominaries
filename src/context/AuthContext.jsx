@@ -2,10 +2,11 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
+  signInWithPopup,
   signInWithEmailAndPassword,
   signOut,
 } from 'firebase/auth'
-import { auth } from '../services/firebase'
+import { auth, googleAuthProvider } from '../services/firebase'
 
 const AuthContext = createContext(undefined)
 
@@ -19,6 +20,10 @@ export function AuthProvider({ children }) {
 
   const login = useCallback((email, password) => {
     return signInWithEmailAndPassword(auth, email, password)
+  }, [])
+
+  const loginWithGoogle = useCallback(() => {
+    return signInWithPopup(auth, googleAuthProvider)
   }, [])
 
   const logout = useCallback(() => {
@@ -40,9 +45,10 @@ export function AuthProvider({ children }) {
       loading,
       signup,
       login,
+      loginWithGoogle,
       logout,
     }),
-    [user, loading, signup, login, logout],
+    [user, loading, signup, login, loginWithGoogle, logout],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

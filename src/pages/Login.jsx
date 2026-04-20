@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import GoogleSignInButton from '../components/GoogleSignInButton'
 import { useAuth } from '../hooks/useAuth'
 import { validateAuthForm } from '../utils/validators'
 
@@ -14,14 +15,28 @@ function getFirebaseAuthMessage(error) {
   }
 }
 
+function getGoogleAuthMessage(error) {
+  switch (error?.code) {
+    case 'auth/popup-closed-by-user':
+      return 'Google sign-in was canceled.'
+    case 'auth/popup-blocked':
+      return 'Popup was blocked by your browser. Please allow popups and try again.'
+    case 'auth/account-exists-with-different-credential':
+      return 'This email is already linked with another sign-in method.'
+    default:
+      return 'Google sign-in failed. Please try again.'
+  }
+}
+
 export default function Login() {
   const navigate = useNavigate()
-  const { login } = useAuth()
+  const { login, loginWithGoogle } = useAuth()
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false)
 
   async function handleSubmit(event) {
     event.preventDefault()
@@ -42,6 +57,20 @@ export default function Login() {
       setError(getFirebaseAuthMessage(firebaseError))
     } finally {
       setIsSubmitting(false)
+    }
+  }
+
+  async function handleGoogleLogin() {
+    setError('')
+    setIsGoogleLoading(true)
+
+    try {
+      await loginWithGoogle()
+      navigate('/dashboard', { replace: true })
+    } catch (firebaseError) {
+      setError(getGoogleAuthMessage(firebaseError))
+    } finally {
+      setIsGoogleLoading(false)
     }
   }
 
@@ -86,11 +115,17 @@ export default function Login() {
 
           <button
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitting || isGoogleLoading}
             className="w-full rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-500"
           >
             {isSubmitting ? 'Signing in...' : 'Sign in'}
           </button>
+
+          <GoogleSignInButton
+            onClick={handleGoogleLogin}
+            disabled={isSubmitting || isGoogleLoading}
+            loadingText="Signing in with Google..."
+          />
         </form>
 
         <p className="mt-4 text-sm text-slate-600">
