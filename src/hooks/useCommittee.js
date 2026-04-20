@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { doc, onSnapshot, setDoc } from 'firebase/firestore'
+import { doc, onSnapshot, serverTimestamp, setDoc } from 'firebase/firestore'
 import { useCommitteeContext } from '../context/CommitteeContext'
 import { useAuth } from './useAuth'
 import { db } from '../services/firebase'
@@ -132,7 +132,7 @@ export function useCommittee() {
 
         const existingHistory = Array.isArray(country.poiHistory) ? country.poiHistory : []
         const nextHistory = [
-          { text: cleanPoiText, recordedAt: new Date().toISOString() },
+          { text: cleanPoiText, recordedAt: serverTimestamp() },
           ...existingHistory,
         ].slice(0, 12)
 

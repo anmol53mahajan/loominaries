@@ -9,6 +9,7 @@ import toast from 'react-hot-toast'
 export default function Notepad() {
   const { user } = useAuth()
   const textareaRef = useRef(null)
+  const loadedContentRef = useRef('')
   const [content, setContent] = useState('')
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -34,6 +35,7 @@ export default function Notepad() {
         const data = snapshot.data()
         const nextContent = String(data?.content || '')
 
+        loadedContentRef.current = nextContent
         setContent(nextContent)
         setSavedAt(data?.updatedAt?.toDate ? data.updatedAt.toDate() : data?.updatedAt || null)
         setHasLoaded(true)
@@ -60,6 +62,11 @@ export default function Notepad() {
     const saveNote = async () => {
       setSaving(true)
       try {
+        if (debouncedContent === loadedContentRef.current) {
+          setSaving(false)
+          return
+        }
+
         await setDoc(
           noteRef,
           {
@@ -71,6 +78,7 @@ export default function Notepad() {
         )
 
         setError('')
+        loadedContentRef.current = debouncedContent
         setSavedAt(new Date())
       } catch (saveError) {
         console.error('Auto-save failed:', saveError)

@@ -96,6 +96,19 @@ const CountryCard = memo(function CountryCard({ country, onSentimentChange, onVo
       </div>
     </article>
   )
+}, (prevProps, nextProps) => {
+  const prevCountry = prevProps.country
+  const nextCountry = nextProps.country
+
+  return (
+    prevCountry.id === nextCountry.id &&
+    prevCountry.name === nextCountry.name &&
+    prevCountry.sentiment === nextCountry.sentiment &&
+    prevCountry.vote === nextCountry.vote &&
+    prevProps.onSentimentChange === nextProps.onSentimentChange &&
+    prevProps.onVoteChange === nextProps.onVoteChange &&
+    prevProps.onDelete === nextProps.onDelete
+  )
 })
 
 export default function Alliance() {
