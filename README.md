@@ -10,6 +10,15 @@ Loominaries is a production-ready Model United Nations strategy suite built to h
 
 It is designed to feel like a premium SaaS dashboard, not a toy app: dark, clean, fast, responsive, and focused on actual delegate workflows.
 
+## Walkthrough Video
+
+<video controls width="100%" preload="metadata">
+  <source src="public/loominaries_walkthrough.mp4" type="video/mp4" />
+  Your browser does not support the video tag.
+</video>
+
+If the embedded player does not load in your Markdown viewer, open directly: [Play Loominaries Walkthrough](public/loominaries_walkthrough.mp4)
+
 ## Table Of Contents
 
 - [Project Overview](#project-overview)
