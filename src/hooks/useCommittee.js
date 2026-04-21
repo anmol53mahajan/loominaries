@@ -9,15 +9,18 @@ export function useCommittee() {
   const { user } = useAuth()
   const [countries, setCountries] = useState([])
   const [sessionLoading, setSessionLoading] = useState(true)
+  const [sessionError, setSessionError] = useState('')
 
   useEffect(() => {
     if (!user) {
       setCountries([])
       setSessionLoading(false)
+      setSessionError('')
       return () => {}
     }
 
     setSessionLoading(true)
+    setSessionError('')
 
     const sessionRef = doc(db, 'sessions', user.uid)
     const unsubscribe = onSnapshot(
@@ -29,6 +32,12 @@ export function useCommittee() {
               .map((country) => ({
                 name: String(country?.name || '').trim(),
                 poiAsked: Boolean(country?.poiAsked),
+                sentiment: ['ally', 'neutral', 'opponent'].includes(String(country?.sentiment || '').toLowerCase())
+                  ? String(country.sentiment).toLowerCase()
+                  : 'neutral',
+                vote: ['yes', 'no', 'abstain'].includes(String(country?.vote || '').toLowerCase())
+                  ? String(country.vote).toLowerCase()
+                  : 'abstain',
                 poiHistory: Array.isArray(country?.poiHistory)
                   ? country.poiHistory
                       .map((entry) => {
@@ -55,11 +64,13 @@ export function useCommittee() {
 
         setCountries(nextCountries)
         setSessionLoading(false)
+        setSessionError('')
       },
       (error) => {
         console.error('Failed to load sessions:', error)
         setCountries([])
         setSessionLoading(false)
+        setSessionError('Unable to load alliance tracker right now.')
       },
     )
 
@@ -99,7 +110,47 @@ export function useCommittee() {
         return
       }
 
-      const nextCountries = [...countries, { name: cleanCountryName, poiAsked: false }]
+      const nextCountries = [...countries, {
+        name: cleanCountryName,
+        poiAsked: false,
+        sentiment: 'neutral',
+        vote: 'abstain',
+        poiHistory: [],
+      }]
+      setCountries(nextCountries)
+      await persistCountries(nextCountries)
+    },
+    [countries, persistCountries],
+  )
+
+  const updateCountrySentiment = useCallback(
+    async (countryName, sentiment) => {
+      const cleanSentiment = String(sentiment || '').toLowerCase()
+      if (!['ally', 'neutral', 'opponent'].includes(cleanSentiment)) {
+        return
+      }
+
+      const nextCountries = countries.map((country) =>
+        country.name === countryName ? { ...country, sentiment: cleanSentiment } : country,
+      )
+
+      setCountries(nextCountries)
+      await persistCountries(nextCountries)
+    },
+    [countries, persistCountries],
+  )
+
+  const updateCountryVote = useCallback(
+    async (countryName, vote) => {
+      const cleanVote = String(vote || '').toLowerCase()
+      if (!['yes', 'no', 'abstain'].includes(cleanVote)) {
+        return
+      }
+
+      const nextCountries = countries.map((country) =>
+        country.name === countryName ? { ...country, vote: cleanVote } : country,
+      )
+
       setCountries(nextCountries)
       await persistCountries(nextCountries)
     },
@@ -162,9 +213,12 @@ export function useCommittee() {
     ...committeeContext,
     countries,
     sessionLoading,
+    sessionError,
     addCountry,
     togglePoiAsked,
     removeCountry,
+    updateCountrySentiment,
+    updateCountryVote,
     recordPoiHistory,
   }
 }

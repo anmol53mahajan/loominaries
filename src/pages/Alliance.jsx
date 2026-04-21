@@ -1,11 +1,9 @@
-import { memo, useCallback, useEffect, useMemo, useState } from 'react'
-import { addDoc, collection, deleteDoc, doc, onSnapshot, query, serverTimestamp, updateDoc, where } from 'firebase/firestore'
-import { Flag, Users, Vote, Trash2 } from 'lucide-react'
+import { memo, useCallback, useEffect, useState } from 'react'
+import { Flag, Trash2, Users, Vote } from 'lucide-react'
 import toast from 'react-hot-toast'
-import { useAuth } from '../hooks/useAuth'
-import { db } from '../services/firebase'
 import ProgressBar from '../components/ui/ProgressBar'
 import { useAllianceStats } from '../hooks/useAllianceStats'
+import { useCommittee } from '../hooks/useCommittee'
 
 const SENTIMENT_OPTIONS = [
   { value: 'ally', label: 'Ally', className: 'border-emerald-500/30 bg-emerald-500/10 text-emerald-200' },
@@ -27,13 +25,15 @@ const CountryCard = memo(function CountryCard({ country, onSentimentChange, onVo
   const sentimentMeta = SENTIMENT_OPTIONS.find((option) => option.value === country.sentiment) || SENTIMENT_OPTIONS[1]
 
   return (
-    <article className={`rounded-2xl border bg-zinc-950 p-4 shadow-lg shadow-black/20 transition-all duration-200 hover:-translate-y-0.5 hover:border-zinc-700 hover:shadow-[0_0_20px_rgba(99,102,241,0.15)] ${
-      country.sentiment === 'ally'
-        ? 'border-emerald-500/40'
-        : country.sentiment === 'opponent'
-          ? 'border-red-500/35'
-          : 'border-zinc-800'
-    }`}>
+    <article
+      className={`rounded-2xl border bg-zinc-950 p-4 shadow-lg shadow-black/20 transition-all duration-200 hover:-translate-y-0.5 hover:border-zinc-700 hover:shadow-[0_0_20px_rgba(99,102,241,0.15)] ${
+        country.sentiment === 'ally'
+          ? 'border-emerald-500/40'
+          : country.sentiment === 'opponent'
+            ? 'border-red-500/35'
+            : 'border-zinc-800'
+      }`}
+    >
       <div className="flex items-start justify-between gap-3">
         <div>
           <h3 className="text-lg font-semibold text-white">{country.name}</h3>
@@ -42,7 +42,7 @@ const CountryCard = memo(function CountryCard({ country, onSentimentChange, onVo
 
         <button
           type="button"
-          onClick={() => onDelete(country.id)}
+          onClick={() => onDelete(country.name)}
           className="rounded-lg border border-zinc-600 p-2 text-zinc-300 transition hover:border-rose-400 hover:text-rose-300"
           aria-label={`Delete ${country.name}`}
         >
@@ -61,7 +61,7 @@ const CountryCard = memo(function CountryCard({ country, onSentimentChange, onVo
               <button
                 key={option.value}
                 type="button"
-                onClick={() => onSentimentChange(country.id, option.value)}
+                onClick={() => onSentimentChange(country.name, option.value)}
                 className={`rounded-lg border px-3 py-2 text-sm font-semibold transition active:scale-[0.99] ${
                   country.sentiment === option.value
                     ? option.className
@@ -87,7 +87,7 @@ const CountryCard = memo(function CountryCard({ country, onSentimentChange, onVo
               <button
                 key={option.value}
                 type="button"
-                onClick={() => onVoteChange(country.id, option.value)}
+                onClick={() => onVoteChange(country.name, option.value)}
                 className={`rounded-lg border px-3 py-2 text-sm font-semibold transition active:scale-[0.99] ${
                   country.vote === option.value
                     ? 'border-blue-400/40 bg-blue-500/15 text-blue-100'
@@ -107,53 +107,32 @@ const CountryCard = memo(function CountryCard({ country, onSentimentChange, onVo
   const nextCountry = nextProps.country
 
   return (
-    prevCountry.id === nextCountry.id &&
-    prevCountry.name === nextCountry.name &&
-    prevCountry.sentiment === nextCountry.sentiment &&
-    prevCountry.vote === nextCountry.vote &&
-    prevProps.onSentimentChange === nextProps.onSentimentChange &&
-    prevProps.onVoteChange === nextProps.onVoteChange &&
-    prevProps.onDelete === nextProps.onDelete
+    prevCountry.name === nextCountry.name
+    && prevCountry.sentiment === nextCountry.sentiment
+    && prevCountry.vote === nextCountry.vote
+    && prevProps.onSentimentChange === nextProps.onSentimentChange
+    && prevProps.onVoteChange === nextProps.onVoteChange
+    && prevProps.onDelete === nextProps.onDelete
   )
 })
 
 export default function Alliance() {
-  const { user } = useAuth()
-  const [countries, setCountries] = useState([])
+  const {
+    countries,
+    sessionLoading,
+    sessionError,
+    addCountry,
+    removeCountry,
+    updateCountrySentiment,
+    updateCountryVote,
+  } = useCommittee()
+
   const [countryName, setCountryName] = useState('')
-  const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
   useEffect(() => {
-    if (!user) {
-      setCountries([])
-      setLoading(false)
-      return () => {}
-    }
-
-    setLoading(true)
-    const countriesQuery = query(collection(db, 'countries'), where('userId', '==', user.uid))
-
-    const unsubscribe = onSnapshot(
-      countriesQuery,
-      (snapshot) => {
-        setCountries(
-          snapshot.docs.map((countryDoc) => ({
-            id: countryDoc.id,
-            ...countryDoc.data(),
-          })),
-        )
-        setLoading(false)
-      },
-      (snapshotError) => {
-        console.error('Failed to load alliance tracker:', snapshotError)
-        setError('Unable to load alliance tracker right now.')
-        setLoading(false)
-      },
-    )
-
-    return unsubscribe
-  }, [user])
+    setError(sessionError || '')
+  }, [sessionError])
 
   const stats = useAllianceStats(countries)
 
@@ -166,65 +145,52 @@ export default function Alliance() {
     }
 
     const duplicate = countries.some((country) => country.name.toLowerCase() === cleanName.toLowerCase())
-
     if (duplicate) {
       setError('That country already exists in the tracker.')
-      return
-    }
-
-    if (!user) {
-      setError('Please login again to add countries.')
       return
     }
 
     setError('')
 
     try {
-      await addDoc(collection(db, 'countries'), {
-        userId: user.uid,
-        name: cleanName,
-        sentiment: 'neutral',
-        vote: 'abstain',
-        createdAt: serverTimestamp(),
-      })
-
+      await addCountry(cleanName)
       setCountryName('')
       toast.success(`${cleanName} added to tracker`)
     } catch (addError) {
       console.error('Add country failed:', addError)
       setError('Could not add country. Try again.')
     }
-  }, [countries, countryName, user])
+  }, [addCountry, countries, countryName])
 
-  const handleSentimentChange = useCallback(async (id, sentiment) => {
+  const handleSentimentChange = useCallback(async (countryNameToUpdate, sentiment) => {
     try {
-      await updateDoc(doc(db, 'countries', id), { sentiment })
+      await updateCountrySentiment(countryNameToUpdate, sentiment)
       toast.success('Sentiment updated')
     } catch (updateError) {
       console.error('Update sentiment failed:', updateError)
       toast.error('Could not update sentiment.')
     }
-  }, [])
+  }, [updateCountrySentiment])
 
-  const handleVoteChange = useCallback(async (id, vote) => {
+  const handleVoteChange = useCallback(async (countryNameToUpdate, vote) => {
     try {
-      await updateDoc(doc(db, 'countries', id), { vote })
+      await updateCountryVote(countryNameToUpdate, vote)
       toast.success('Vote updated')
     } catch (updateError) {
       console.error('Update vote failed:', updateError)
       toast.error('Could not update vote.')
     }
-  }, [])
+  }, [updateCountryVote])
 
-  const handleDeleteCountry = useCallback(async (id) => {
+  const handleDeleteCountry = useCallback(async (countryNameToDelete) => {
     try {
-      await deleteDoc(doc(db, 'countries', id))
+      await removeCountry(countryNameToDelete)
       toast.success('Country removed')
     } catch (deleteError) {
       console.error('Delete country failed:', deleteError)
       toast.error('Could not delete country.')
     }
-  }, [])
+  }, [removeCountry])
 
   return (
     <section className="space-y-5 text-white">
@@ -241,9 +207,9 @@ export default function Alliance() {
           </div>
         </div>
 
-        {(error || !user) && (
+        {error && (
           <div className="mt-4 rounded-xl border border-rose-500/40 bg-rose-500/10 p-3 text-sm text-rose-200">
-            {error || 'Please login to manage your tracker.'}
+            {error}
           </div>
         )}
       </header>
@@ -268,7 +234,7 @@ export default function Alliance() {
 
       <section className="grid gap-4 lg:grid-cols-[1.6fr_1fr]">
         <div className="space-y-4">
-          {loading ? (
+          {sessionLoading ? (
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
               {Array.from({ length: 6 }).map((_, index) => (
                 <div key={`country-skeleton-${index}`} className="h-56 animate-pulse rounded-2xl border border-zinc-700 bg-zinc-900/70" />
@@ -286,7 +252,7 @@ export default function Alliance() {
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
               {countries.map((country) => (
                 <CountryCard
-                  key={country.id}
+                  key={country.name}
                   country={country}
                   onSentimentChange={handleSentimentChange}
                   onVoteChange={handleVoteChange}
