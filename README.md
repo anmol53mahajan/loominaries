@@ -12,12 +12,7 @@ It is designed to feel like a premium SaaS dashboard, not a toy app: dark, clean
 
 ## Walkthrough Video
 
-<video controls width="100%" preload="metadata">
-  <source src="public/loominaries_walkthrough.mp4" type="video/mp4" />
-  Your browser does not support the video tag.
-</video>
-
-If the embedded player does not load in your Markdown viewer, open directly: [Play Loominaries Walkthrough](public/loominaries_walkthrough.mp4)
+Watch the walkthrough here: [Loominaries Walkthrough Video](https://drive.google.com/file/d/19uxBokx8CRMs7p0Pvfq3VCGx0jnlAln-/view?usp=sharing)
 
 ## Table Of Contents
 
